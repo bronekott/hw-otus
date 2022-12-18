@@ -33,7 +33,6 @@ func Top10(str string) []string {
 
 	if len(wordSlice) > 10 {
 		return wordSlice[:10]
-	} else {
-		return wordSlice
 	}
+	return wordSlice
 }
