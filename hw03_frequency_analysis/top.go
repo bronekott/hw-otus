@@ -6,8 +6,9 @@ import (
 	"strings"
 )
 
+var pattern = regexp.MustCompile(`(\p{L})\p{P}$`)
+
 func Top10(str string) []string {
-	pattern := regexp.MustCompile(`(\p{L})\p{P}$`)
 	wordMap := make(map[string]int)
 	wordSlice := []string{}
 
@@ -23,7 +24,6 @@ func Top10(str string) []string {
 			wordSlice = append(wordSlice, word)
 		}
 	}
-
 	sort.Slice(wordSlice, func(i, j int) bool {
 		if wordMap[wordSlice[i]] == wordMap[wordSlice[j]] {
 			return wordSlice[i] < wordSlice[j]
