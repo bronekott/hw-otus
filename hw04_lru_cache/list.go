@@ -67,13 +67,14 @@ func (l *list) PushBack(v interface{}) *ListItem {
 }
 
 func (l *list) Remove(i *ListItem) {
-	if l.head == i {
+	switch i {
+	case l.head:
 		l.head = i.Next
 		i.Next.Prev = i.Prev
-	} else if l.tail == i {
+	case l.tail:
 		l.tail = i.Prev
 		i.Prev.Next = i.Next
-	} else {
+	default:
 		i.Next.Prev = i.Prev
 		i.Prev.Next = i.Next
 	}

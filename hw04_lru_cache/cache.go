@@ -46,25 +46,26 @@ func (cache *lruCache) Get(key Key) (interface{}, bool) {
 func (cache *lruCache) Set(key Key, value interface{}) bool {
 	cache.Lock()
 	defer cache.Unlock()
-	if checkedItem, ok := cache.items[key]; ok {
+
+	checkedItem, itemOk := cache.items[key]
+	if itemOk {
 		checkedItem.Value = cacheItem{key: key, value: value}
 		cache.queue.MoveToFront(checkedItem)
-		return ok
-	} else {
-		item := cache.queue.PushFront(cacheItem{key: key, value: value})
-		cache.items[key] = item
-		if cache.queue.Len() > cache.capacity {
-			itemToRemove := cache.queue.Back()
-			removedCacheItem, ok := itemToRemove.Value.(cacheItem)
-			if !ok {
-				log.Println("Failed type assertion")
-				return ok
-			}
-			cache.queue.Remove(itemToRemove)
-			delete(cache.items, removedCacheItem.key)
-		}
-		return ok
+		return true
 	}
+	item := cache.queue.PushFront(cacheItem{key: key, value: value})
+	cache.items[key] = item
+	if cache.queue.Len() > cache.capacity {
+		itemToRemove := cache.queue.Back()
+		removedCacheItem, ok := itemToRemove.Value.(cacheItem)
+		if !ok {
+			log.Println("Failed type assertion")
+			return false
+		}
+		cache.queue.Remove(itemToRemove)
+		delete(cache.items, removedCacheItem.key)
+	}
+	return false
 }
 
 func (cache *lruCache) Clear() {
